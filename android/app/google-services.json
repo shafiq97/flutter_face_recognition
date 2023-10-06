@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "953220242504",
+    "project_id": "face-recognition-45345",
+    "storage_bucket": "face-recognition-45345.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953220242504:android:8ae5d8637796094f04cc7d",
+        "android_client_info": {
+          "package_name": "com.example.FaceNet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxGSqFIXnse0p565iweOfJYH_sEXURHCw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
