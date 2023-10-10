@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 
 class CameraService {
@@ -13,6 +14,9 @@ class CameraService {
   String? _imagePath;
   String? get imagePath => this._imagePath;
 
+  List<CameraDescription> _availableCameras = [];
+  int _currentCameraIndex = 0; // default to back camera
+
   Future<void> initialize() async {
     if (_cameraController != null) return;
     CameraDescription description = await _getCameraDescription();
@@ -22,10 +26,19 @@ class CameraService {
     );
   }
 
+  Future<void> toggleCamera() async {
+    if (_cameraController != null) {
+      await _cameraController!.dispose();
+      _cameraController = null;
+    }
+
+    _currentCameraIndex = (_currentCameraIndex + 1) % _availableCameras.length;
+    await initialize();
+  }
+
   Future<CameraDescription> _getCameraDescription() async {
-    List<CameraDescription> cameras = await availableCameras();
-    return cameras.firstWhere((CameraDescription camera) =>
-        camera.lensDirection == CameraLensDirection.back);
+    _availableCameras = await availableCameras();
+    return _availableCameras[_currentCameraIndex];
   }
 
   Future _setupCameraController({

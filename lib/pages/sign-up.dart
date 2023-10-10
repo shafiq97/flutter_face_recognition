@@ -12,6 +12,8 @@ import 'package:camera/camera.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:flutter/material.dart';
 
+import 'home.dart';
+
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
 
@@ -194,22 +196,41 @@ class SignUpState extends State<SignUp> {
     }
 
     return Scaffold(
-        body: Stack(
-          children: [
-            body,
-            CameraHeader(
-              "SIGN UP",
-              onBackPressed: _onBackPressed,
+      body: Stack(
+        children: [
+          body,
+          CameraHeader(
+            "SIGN UP",
+            onBackPressed: _onBackPressed,
+          ),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: !_bottomSheetVisible
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  onPressed: () async {
+                    await _cameraService.toggleCamera();
+                    if (mounted) {
+                      setState(() {});
+                    }
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => MyHomePage(),
+                    ));
+                  },
+                  child: Icon(Icons.flip_camera_ios),
+                ),
+                SizedBox(height: 10), // Add some spacing
+                AuthActionButton(
+                  onPressed: onShot,
+                  isLogin: false,
+                  reload: _reload,
+                ),
+              ],
             )
-          ],
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: !_bottomSheetVisible
-            ? AuthActionButton(
-                onPressed: onShot,
-                isLogin: false,
-                reload: _reload,
-              )
-            : Container());
+          : Container(),
+    );
   }
 }

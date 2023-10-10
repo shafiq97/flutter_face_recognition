@@ -12,6 +12,8 @@ import 'package:face_net_authentication/services/face_detector_service.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
+import 'home.dart';
+
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
 
@@ -105,7 +107,7 @@ class SignInState extends State<SignIn> {
     if (_isInitializing) return Center(child: CircularProgressIndicator());
     if (_isPictureTaken)
       return SinglePicture(imagePath: _cameraService.imagePath!);
-    return CameraDetectionPreview(); 
+    return CameraDetectionPreview();
   }
 
   @override
@@ -121,7 +123,28 @@ class SignInState extends State<SignIn> {
         children: [body, header],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: fab,
+      floatingActionButton: !_isPictureTaken
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  onPressed: () async {
+                    await _cameraService.toggleCamera();
+                    if (mounted) {
+                      setState(() {});
+                    }
+                    // Navigate to home after flipping the camera
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => MyHomePage(),
+                    ));
+                  },
+                  child: Icon(Icons.flip_camera_ios),
+                ),
+                SizedBox(height: 10), // Add some spacing
+                AuthButton(onTap: onTap),
+              ],
+            )
+          : null,
     );
   }
 
