@@ -82,13 +82,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Image(image: AssetImage('assets/logo.png')),
+                      Image(image: AssetImage('assets/logo.jpeg')),
                       Container(
                         width: MediaQuery.of(context).size.width * 0.8,
                         child: Column(
                           children: [
+                            SizedBox(
+                              height: 20,
+                            ),
                             Text(
-                              "FACE RECOGNITION AUTHENTICATION",
+                              "CELEBRITY FACE RECOGNITION",
                               style: TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
@@ -96,13 +99,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             SizedBox(
                               height: 20,
                             ),
-                            Text(
-                              "Demo application that uses Flutter and tensorflow to implement authentication with facial recognition",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                            // Text(
+                            //   "Demo application that uses Flutter and tensorflow to implement authentication with facial recognition",
+                            //   style: TextStyle(
+                            //     fontSize: 16,
+                            //   ),
+                            //   textAlign: TextAlign.center,
+                            // ),
                           ],
                         ),
                       ),
@@ -137,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'LOGIN',
+                                    'PREDICT ARTIST',
                                     style: TextStyle(color: Color(0xFF0F0BDB)),
                                   ),
                                   SizedBox(
@@ -180,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'SIGN UP',
+                                    'REGISTER ARTIST',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   SizedBox(

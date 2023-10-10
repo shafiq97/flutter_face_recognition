@@ -105,12 +105,12 @@ class SignInState extends State<SignIn> {
     if (_isInitializing) return Center(child: CircularProgressIndicator());
     if (_isPictureTaken)
       return SinglePicture(imagePath: _cameraService.imagePath!);
-    return CameraDetectionPreview();
+    return CameraDetectionPreview(); 
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget header = CameraHeader("LOGIN", onBackPressed: _onBackPressed);
+    Widget header = CameraHeader("PREDICT", onBackPressed: _onBackPressed);
     Widget body = getBodyWidget();
     Widget? fab;
     if (!_isPictureTaken) fab = AuthButton(onTap: onTap);

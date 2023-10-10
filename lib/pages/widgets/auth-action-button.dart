@@ -7,15 +7,17 @@ import 'package:face_net_authentication/services/camera.service.dart';
 import 'package:face_net_authentication/services/ml_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart';
+
 import '../home.dart';
 import 'app_text_field.dart';
 
 class AuthActionButton extends StatefulWidget {
-  AuthActionButton(
-      {Key? key,
-      required this.onPressed,
-      required this.isLogin,
-      required this.reload});
+  AuthActionButton({
+    Key? key,
+    required this.onPressed,
+    required this.isLogin,
+    required this.reload,
+  });
   final Function onPressed;
   final bool isLogin;
   final Function reload;
@@ -29,21 +31,35 @@ class _AuthActionButtonState extends State<AuthActionButton> {
 
   final TextEditingController _userTextEditingController =
       TextEditingController(text: '');
-  final TextEditingController _passwordTextEditingController =
+  final TextEditingController _genderTextEditingController =
+      TextEditingController(text: '');
+  final TextEditingController _dateOfBirthTextEditingController =
+      TextEditingController(text: '');
+  final TextEditingController _heightTextEditingController =
+      TextEditingController(text: '');
+  final TextEditingController _educationTextEditingController =
       TextEditingController(text: '');
 
   User? predictedUser;
+  DatabaseHelper _databaseHelper = DatabaseHelper.instance;
 
   Future _signUp(context) async {
-    DatabaseHelper _databaseHelper = DatabaseHelper.instance;
     List predictedData = _mlService.predictedData;
     String user = _userTextEditingController.text;
-    String password = _passwordTextEditingController.text;
+    String gender = _genderTextEditingController.text;
+    String dateOfBirth = _dateOfBirthTextEditingController.text;
+    double height = double.parse(_heightTextEditingController.text);
+    String education = _educationTextEditingController.text;
+
     User userToSave = User(
       user: user,
-      password: password,
+      gender: gender,
+      dateOfBirth: dateOfBirth,
+      height: height,
+      education: education,
       modelData: predictedData,
     );
+
     await _databaseHelper.insert(userToSave);
     this._mlService.setPredictedData([]);
     Navigator.push(context,
@@ -51,21 +67,42 @@ class _AuthActionButtonState extends State<AuthActionButton> {
   }
 
   Future _signIn(context) async {
-    String password = _passwordTextEditingController.text;
-    if (this.predictedUser!.password == password) {
-      Navigator.push(
+    String user = _userTextEditingController.text;
+    User? userFromDB = await _databaseHelper.getUserByUsername(user);
+
+    if (userFromDB != null) {
+      if (userFromDB.gender == _genderTextEditingController.text &&
+          userFromDB.dateOfBirth ==
+              DateTime.parse(_dateOfBirthTextEditingController.text) &&
+          userFromDB.height ==
+              double.parse(_heightTextEditingController.text) &&
+          userFromDB.education == _educationTextEditingController.text) {
+        Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => Profile(
-                    this.predictedUser!.user,
-                    imagePath: _cameraService.imagePath!,
-                  )));
+            builder: (BuildContext context) => Profile(
+              userFromDB.user,
+              imagePath: _cameraService.imagePath!,
+            ),
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content:
+                  Text('Authentication failed! Please check your credentials.'),
+            );
+          },
+        );
+      }
     } else {
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            content: Text('Wrong password!'),
+            content: Text('User not found!'),
           );
         },
       );
@@ -161,23 +198,35 @@ class _AuthActionButtonState extends State<AuthActionButton> {
                 !widget.isLogin
                     ? AppTextField(
                         controller: _userTextEditingController,
-                        labelText: "Your Name",
+                        labelText: "Artist Name",
                       )
                     : Container(),
                 SizedBox(height: 10),
-                widget.isLogin && predictedUser == null
-                    ? Container()
-                    : AppTextField(
-                        controller: _passwordTextEditingController,
-                        labelText: "Password",
-                        isPassword: true,
-                      ),
+                AppTextField(
+                  controller: _genderTextEditingController,
+                  labelText: "Gender",
+                ),
+                SizedBox(height: 10),
+                AppTextField(
+                  controller: _dateOfBirthTextEditingController,
+                  labelText: "Date of Birth",
+                ),
+                SizedBox(height: 10),
+                AppTextField(
+                  controller: _heightTextEditingController,
+                  labelText: "Height",
+                ),
+                SizedBox(height: 10),
+                AppTextField(
+                  controller: _educationTextEditingController,
+                  labelText: "Education",
+                ),
                 SizedBox(height: 10),
                 Divider(),
                 SizedBox(height: 10),
                 widget.isLogin && predictedUser != null
                     ? AppButton(
-                        text: 'LOGIN',
+                        text: 'PERDICT ARTIST',
                         onPressed: () async {
                           _signIn(context);
                         },
@@ -188,7 +237,7 @@ class _AuthActionButtonState extends State<AuthActionButton> {
                       )
                     : !widget.isLogin
                         ? AppButton(
-                            text: 'SIGN UP',
+                            text: 'REGISTER ARTIST',
                             onPressed: () async {
                               await _signUp(context);
                             },

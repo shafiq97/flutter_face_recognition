@@ -7,12 +7,16 @@ import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
   static final _databaseName = "MyDatabase.db";
-  static final _databaseVersion = 1;
+  static final _databaseVersion = 2;
 
   static final table = 'users';
   static final columnId = 'id';
   static final columnUser = 'user';
-  static final columnPassword = 'password';
+  static final columnGender = 'gender'; // New field for gender
+  static final columnDateOfBirth =
+      'date_of_birth'; // New field for date of birth
+  static final columnHeight = 'height'; // New field for height
+  static final columnEducation = 'education'; // New field for education
   static final columnModelData = 'model_data';
 
   DatabaseHelper._privateConstructor();
@@ -36,7 +40,10 @@ class DatabaseHelper {
           CREATE TABLE $table (
             $columnId INTEGER PRIMARY KEY,
             $columnUser TEXT NOT NULL,
-            $columnPassword TEXT NOT NULL,
+            $columnGender TEXT NOT NULL, 
+            $columnDateOfBirth TEXT NOT NULL,
+            $columnHeight REAL NOT NULL,
+            $columnEducation TEXT NOT NULL,
             $columnModelData TEXT NOT NULL
           )
           ''');
@@ -56,5 +63,19 @@ class DatabaseHelper {
   Future<int> deleteAll() async {
     Database db = await instance.database;
     return await db.delete(table);
+  }
+
+  Future<User?> getUserByUsername(String username) async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> users = await db.query(
+      table,
+      where: '$columnUser = ?',
+      whereArgs: [username],
+    );
+    if (users.isNotEmpty) {
+      return User.fromMap(users.first);
+    } else {
+      return null;
+    }
   }
 }
